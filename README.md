@@ -11,11 +11,17 @@
 ![subnet](img/pembagiansubnet.png)
 
 Richter adalah DNS Server
+
 Revolte adalah DHCP Server
+
 Sein dan Stark adalah Web Server
+
 Jumlah Host pada TurkRegion adalah 1022
+
 Jumlah Host pada LaubHills adalah 255
+
 Jumlah Host pada SchwerMountain adalah 64
+
 Jumlah Host pada GrobeForest adalah 512
 
 ## VLSM
@@ -309,11 +315,17 @@ subnet 192.178.4.0 netmask 255.255.252.0 {
 ```
 
 `option domain-name-servers` adalah konfigurasi untuk menentukan DNS Server yang akan digunakan
+
 `default-lease-time` adalah waktu standar untuk lease suatu alamat IP
+
 `max-lease-time` adalah waktu maksimum untuk lease suatu alamat IP
+
 `subnet` adalah jaringan subnet yang akan digunakan dalam konfigurasi
+
 `range` adalah rentang alamat IP yang akan dialokasikan
+
 `option routers` adalah pengaturan IP router yang akan dijadikan referensi
+
 `option broadcast-address` adalah konfigurasi alamat IP broadcast yang akan dipakai
 
 ## DHCP Relay
@@ -337,8 +349,11 @@ net.ipv4.ip_forward=1
 ```
 
 `SERVERS` adalah alamat IP dari DHCP Server yang akan digunakan
+
 `INTERFACES` adalah antarmuka yang akan dipakai untuk DHCP Relay
+
 `OPTION` adalah pilihan atau konfigurasi spesifik yang digunakan untuk DHCP Relay
+
 `net.ipv4.ip_forward=1` adalah untuk mengaktifkan fungsi ip forwarding
 
 ## Konfigurasi DNS
@@ -369,7 +384,9 @@ options {
 ```
 
 `forwarders` adalah server DNS yang akan digunakan untuk meneruskan permintaan
+
 `allow-query` adalah konfigurasi yang mengizinkan permintaan dari semua alamat IP
+
 `auth-nxdomain no` adalah opsi yang memungkinkan penanganan domain yang tidak ada
 
 ## Konfigurasi Web Server
@@ -385,4 +402,5 @@ apt-get install netcat -y
 ```
 
 `index.nginx-debian.html` adalah nama file HTML yang akan ditampilkan di server web nantinya
+
 `netcat` adalah perangkat lunak yang digunakan untuk mengirimkan data ke server web
