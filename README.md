@@ -444,7 +444,9 @@ iptables -A INPUT -p udp -j DROP
 ```
 
 `iptables -F` adalah perintah yang digunakan untuk menghapus semua aturan (rule) yang ada pada iptables
+
 `iptables -A INPUT -p tcp --dport 8080 -j ACCEPT` adalah perintah untuk menambahkan aturan pada rantai INPUT agar menerima koneksi TCP pada port 8080
+
 `iptables -A INPUT -p tcp ! --dport 8080 -j DROP` adalah perintah untuk menambahkan aturan pada rantai INPUT agar menolak koneksi TCP yang tidak menuju ke port 8080
 
 ## Nomor 3
