@@ -8,7 +8,7 @@
 
 ## Pembagian Subnet dan Topologi
 
-![subnet](img/pembagiansubnet.png)
+![subnet](image/pembagiansubnet.png)
 
 Richter adalah DNS Server
 
@@ -41,7 +41,7 @@ Jumlah Host pada GrobeForest adalah 512
 | Total | 1871 | /20 |
 
 ## Tree
-![tree](img/tree.png)
+![tree](image/tree.png)
 
 Subnet besar yang dibuat memiliki alamat jaringan (NID) 192.178.0.0 dengan netmask /20. 
 Dalam konsep VLSM, subnetting dilakukan dengan menurunkan panjang netmask ke bagian atasnya. 
@@ -55,7 +55,7 @@ Kemudian, akan disesuaikan pengalokasian alamat IP sesuai dengan subdivisi subne
 berdasarkan struktur pohon pada topologi yang diberikan. Selanjutnya, setiap node akan diberikan rentang 
 alamat IP yang telah ditentukan sesuai dengan subnetnya untuk diimplementasikan dalam jaringan.
 
-![ip](img/ip.png)
+![ip](image/ip.png)
 
 # Konfigurasi Router dan IP
 ## Konfigurasi ETH
