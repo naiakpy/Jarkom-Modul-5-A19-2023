@@ -8,21 +8,21 @@
 
 ## Pembagian Subnet dan Topologi
 
-![subnet](image/pembagiansubnet.png)
+![subnet](image/subnet.png)
 
-Richter adalah DNS Server
+- Richter adalah DNS Server
 
-Revolte adalah DHCP Server
+- Revolte adalah DHCP Server
 
-Sein dan Stark adalah Web Server
+- Sein dan Stark adalah Web Server
 
-Jumlah Host pada TurkRegion adalah 1022
+- Jumlah Host pada TurkRegion adalah 1022
 
-Jumlah Host pada LaubHills adalah 255
+- Jumlah Host pada LaubHills adalah 255
 
-Jumlah Host pada SchwerMountain adalah 64
+- Jumlah Host pada SchwerMountain adalah 64
 
-Jumlah Host pada GrobeForest adalah 512
+- Jumlah Host pada GrobeForest adalah 512
 
 ## VLSM
 
@@ -338,7 +338,7 @@ apt-get install isc-dhcp-relay -y
 wait
 
 echo '
-SERVERS="10.15.0.2"
+SERVERS="192.178.0.2"
 INTERFACES="eth0 eth1 eth2"
 OPTIONS="-m replace"
 ' >  /etc/default/isc-dhcp-relay
@@ -404,3 +404,85 @@ apt-get install netcat -y
 `index.nginx-debian.html` adalah nama file HTML yang akan ditampilkan di server web nantinya
 
 `netcat` adalah perangkat lunak yang digunakan untuk mengirimkan data ke server web
+
+## Soal
+
+## Nomor 1
+Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Aura menggunakan iptables, tetapi tidak ingin menggunakan MASQUERADE.
+
+Pada Aura, konfigurasikan iptables
+```iptables -t nat -A POSTROUTING -s 192.178.0.0/20 -o eth0 -j SNAT --to-source 192.168.122.14```
+
+`-t nat` digunakan untuk menambahkan aturan pada tabel nat
+
+`-A POSTROUTING` adalah menambahkan aturan pada rantai POSTROUTING
+
+`-s` adalah opsi yang menetapkan alamat IP sumber
+
+`-o` adalah opsi yang menetapkan antarmuka
+
+`-j SNAT` adalah opsi yang menunjukkan aksi SNAT yang akan dilakukan
+
+`--to-source` adalah opsi yang menunjukkan alamat IP yang akan digunakan untuk melakukan SNAT
+
+## Nomor 2
+Kalian diminta untuk melakukan drop semua TCP dan UDP kecuali port 8080 pada TCP.
+
+Untuk drop semua koneksi TCP dan UDP kecuali yang menuju port 8080 pada TCP, konfigurasi iptables pada node SchewerMountain
+```
+# Clear semua aturan yang ada jika diperlukan
+iptables -F
+
+# Izinkan koneksi yang masuk pada port 8080 TCP
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+
+# Drop semua koneksi TCP yang bukan menuju ke port 8080
+iptables -A INPUT -p tcp ! --dport 8080 -j DROP
+
+# Drop semua koneksi UDP
+iptables -A INPUT -p udp -j DROP
+```
+
+`iptables -F` adalah perintah yang digunakan untuk menghapus semua aturan (rule) yang ada pada iptables
+`iptables -A INPUT -p tcp --dport 8080 -j ACCEPT` adalah perintah untuk menambahkan aturan pada rantai INPUT agar menerima koneksi TCP pada port 8080
+`iptables -A INPUT -p tcp ! --dport 8080 -j DROP` adalah perintah untuk menambahkan aturan pada rantai INPUT agar menolak koneksi TCP yang tidak menuju ke port 8080
+
+## Nomor 3
+Kepala Suku North Area meminta kalian untuk membatasi DHCP dan DNS Server hanya dapat dilakukan ping oleh maksimal 3 device secara bersamaan, selebihnya akan di drop.
+
+Untuk membatasi akses ping terhadap DHCP dan DNS Server hanya untuk maksimal tiga perangkat secara bersamaan, kita akan mengonfigurasi iptables pada node Revolte dan Richter
+
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP
+```
+
+`iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP` menambahkan aturan pada rantai INPUT untuk menolak koneksi ICMP yang melebihi 3 buah koneksi
+
+`--connlimit-above 3` adalah parameter yang menetapkan jumlah maksimum koneksi
+
+`--connlimit-mask 0` adalah parameter yang menetapkan mask
+
+## Nomor 4
+Lakukan pembatasan sehingga koneksi SSH pada Web Server hanya dapat dilakukan oleh masyarakat yang berada pada GrobeForest.
+
+Untuk membatasi koneksi SSH pada Web Server agar hanya dapat diakses oleh masyarakat yang berada di GrobeForest, konfigurasi iptables pada node Sein dan Stark perlu dilakukan
+```
+iptables -A INPUT -p tcp --dport 22 -s 192.178.4.0/22 -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j DROP```
+```
+
+`-s 192.178.4.0/22` menentukan rentang alamat IP sumber yang diizinkan, dalam hal ini, subnet 192.178.4.0/22 yang terletak di block A10, yang merupakan bagian dari GrobeForest
+
+`iptables -A INPUT -p tcp --dport 22 -j DROP` adalah perintah untuk menambahkan aturan pada rantai INPUT agar menolak koneksi TCP pada port 22 yang tidak berasal dari subnet A10 (192.178.4.0/22)
+
+## Nomor 5
+Selain itu, akses menuju WebServer hanya diperbolehkan saat jam kerja yaitu Senin-Jumat pada pukul 08.00-16.00.
+
+Untuk membatasi akses ke Web Server agar hanya diperbolehkan pada jam kerja (Senin-Jumat) pada rentang waktu 08.00-16.00, konfigurasi iptables pada node Sein dan Stark perlu dilakukan
+```
+# Izinkan akses ke Web Server pada Senin-Jumat pukul 08.00-16.00
+iptables -A INPUT -p tcp --dport 80 -m time --timestart 08:00 --timestop 16:00 --weekdays Mon,Tue,Wed,Thu,Fri -j ACCEPT
+
+# Menolak akses selain dari aturan yang telah ditentukan
+iptables -A INPUT -p tcp --dport 80 -j DROP
+```
